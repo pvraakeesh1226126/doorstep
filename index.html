@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TorqWash Pro | Modern Doorstep Car Wash & Detailing</title>
+  <meta name="description" content="Book professional doorstep car wash, interior steam cleaning, machine polishing and 9H ceramic coating at your home or office.">
+
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z'/></svg>">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet Maps CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       GLOBAL TOP BAR: Brand, Role Switcher, View Mode & Alerts
+       ========================================================================== -->
+  <header class="global-header">
+    <div class="brand-badge">
+      <div class="brand-icon">
+        <i class="fa-solid fa-droplet"></i>
+      </div>
+      <div>
+        <div class="brand-name">TORQWASH <span class="brand-tag">PRO</span></div>
+      </div>
+    </div>
+
+    <!-- Role Switcher -->
+    <div class="role-switcher">
+      <button class="role-btn active" data-role="customer" onclick="window.switchRole('customer')">
+        <i class="fa-solid fa-user"></i> <span>Customer</span>
+      </button>
+      <button class="role-btn" data-role="provider" onclick="window.switchRole('provider')">
+        <i class="fa-solid fa-van-shuttle"></i> <span>Provider</span>
+      </button>
+      <button class="role-btn" data-role="admin" onclick="window.switchRole('admin')">
+        <i class="fa-solid fa-shield-halved"></i> <span>Admin HQ</span>
+      </button>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- Device View Toggle -->
+      <button class="view-toggle-btn active" id="viewModeMobileBtn" onclick="window.toggleViewMode('mobile')" title="Mobile iPhone Frame">
+        <i class="fa-solid fa-mobile-screen-button"></i> <span>Mobile</span>
+      </button>
+      <button class="view-toggle-btn" id="viewModeDesktopBtn" onclick="window.toggleViewMode('desktop')" title="Full Desktop Web View">
+        <i class="fa-solid fa-desktop"></i> <span>Desktop</span>
+      </button>
+
+      <!-- Notifications -->
+      <button class="icon-btn" onclick="torqApp.openNotifications()" title="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge" id="headerNotifBadge">2</span>
+      </button>
+
+      <!-- Settings Icon Button -->
+      <button class="icon-btn" onclick="torqCustomer.openSettingsModal()" title="Settings & Preferences">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+
+      <!-- Auth Profile (Click to open Profile & Settings) -->
+      <div class="profile-avatar" onclick="window.switchMainTab('profileTab')" title="Alex Sharma Profile & Settings">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar">
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN APP CONTAINER (Supports Mobile iPhone Shell & Full Desktop View)
+       ========================================================================== -->
+  <main class="app-container mobile-mode" id="mainAppContainer">
+    <div class="mobile-frame">
+      
+      <!-- Mobile Island / Camera Notch -->
+      <div class="mobile-island">
+        <div class="camera-dot"></div>
+        <div class="sensor-dot"></div>
+      </div>
+
+      <!-- Mobile Status Bar (9:41, WiFi, Battery) -->
+      <div class="mobile-status-bar">
+        <div class="status-time" id="statusBarTime">15:52</div>
+        <div class="status-icons">
+          <i class="fa-solid fa-signal"></i>
+          <i class="fa-solid fa-wifi"></i>
+          <i class="fa-solid fa-battery-full"></i>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           1. CUSTOMER APP CONTAINER
+           ========================================================================== -->
+      <div id="customerAppContainer" class="app-viewport">
+        
+        <!-- Customer Top Location Bar -->
+        <div class="customer-top-bar">
+          <div class="location-selector" onclick="torqCustomer.startBookingWizard('srv_2')">
+            <i class="fa-solid fa-location-crosshairs loc-pin"></i>
+            <div class="loc-info">
+              <span class="loc-label"><i class="fa-solid fa-bolt"></i> Doorstep In 30m</span>
+              <span class="loc-name" id="customerLocationDisplay">Indiranagar 100ft Rd, BLR</span>
+            </div>
+            <i class="fa-solid fa-chevron-down" style="font-size: 10px; color: var(--text-dim); margin-left: 4px;"></i>
+          </div>
+
+          <div class="user-quick-profile">
+            <button class="details-btn" onclick="torqCustomer.openGarageModal()" style="padding: 4px 8px; font-size: 11px;">
+              <i class="fa-solid fa-warehouse"></i> Garage (5)
+            </button>
+          </div>
+        </div>
+
+        <!-- Prominent Navigation Strip (Always accessible and 100% clickable on Mobile & Desktop) -->
+        <div class="customer-nav-strip">
+          <button class="nav-strip-btn active" data-tab="homeTab" onclick="window.switchMainTab('homeTab')">
+            <i class="fa-solid fa-house"></i> Home
+          </button>
+          <button class="nav-strip-btn" data-tab="servicesTab" onclick="window.switchMainTab('servicesTab')">
+            <i class="fa-solid fa-soap"></i> Services
+          </button>
+          <button class="nav-strip-btn" data-tab="subscriptionsTab" onclick="window.switchMainTab('subscriptionsTab')">
+            <i class="fa-solid fa-gem"></i> Monthly Plans
+          </button>
+          <button class="nav-strip-btn" data-tab="bookingsTab" onclick="window.switchMainTab('bookingsTab')">
+            <i class="fa-solid fa-clock-rotate-left"></i> Service History
+          </button>
+          <button class="nav-strip-btn" data-tab="complaintsTab" onclick="window.switchMainTab('complaintsTab')">
+            <i class="fa-solid fa-triangle-exclamation"></i> Complaints
+          </button>
+          <button class="nav-strip-btn" onclick="torqCustomer.openFeedbackModal()">
+            <i class="fa-solid fa-star"></i> Feedback
+          </button>
+          <button class="nav-strip-btn" data-tab="offersTab" onclick="window.switchMainTab('offersTab')">
+            <i class="fa-solid fa-tag"></i> Offers
+          </button>
+          <button class="nav-strip-btn" data-tab="profileTab" onclick="window.switchMainTab('profileTab')">
+            <i class="fa-solid fa-user"></i> Profile
+          </button>
+          <button class="nav-strip-btn" data-tab="settingsTab" onclick="torqCustomer.openSettingsModal()">
+            <i class="fa-solid fa-gear"></i> Settings
+          </button>
+        </div>
+
+        <!-- TAB 1: HOME SCREEN -->
+        <div class="view-panel active" id="homeTab">
+          
+          <!-- Active Vehicle Banner -->
+          <div class="garage-banner" id="activeCarCard">
+            <!-- Rendered dynamically by store -->
+          </div>
+
+          <!-- Active Booking Ongoing Alert -->
+          <div id="activeBookingAlertContainer">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Hero Wash Booking Banner -->
+          <div class="hero-wash-card">
+            <img class="hero-bg-img" src="assets/images/tata_safari_foam.jpg" alt="Doorstep Foam Wash Tata Safari">
+            <div class="hero-overlay">
+              <div class="hero-pill">
+                <span class="pulse-dot"></span> Next Slot: Today 04:30 PM
+              </div>
+              <h1 class="hero-title">High-Gloss Doorstep<br>Car Detailing</h1>
+              <p class="hero-subtitle">100% scratch-safe foam wash with onboard RO water & zero electricity needed from your home.</p>
+              <div>
+                <button class="hero-cta-btn" onclick="torqCustomer.startBookingWizard('srv_2')">
+                  <i class="fa-solid fa-car-wash"></i> Book Doorstep Wash
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Quick Filters -->
+          <div class="category-scroll">
+            <div class="category-pill active" onclick="torqCustomer.filterServices('All', this)">
+              <i class="fa-solid fa-grid-2"></i> All Services
+            </div>
+            <div class="category-pill" onclick="torqCustomer.filterServices('Wash', this)">
+              <i class="fa-solid fa-soap"></i> Foam Wash
+            </div>
+            <div class="category-pill" onclick="torqCustomer.filterServices('Interior', this)">
+              <i class="fa-solid fa-wind"></i> Interior Spa
+            </div>
+            <div class="category-pill" onclick="torqCustomer.filterServices('Combo', this)">
+              <i class="fa-solid fa-gem"></i> Full Detail Combos
+            </div>
+            <div class="category-pill" onclick="torqCustomer.filterServices('Detailing', this)">
+              <i class="fa-solid fa-shield-virus"></i> Ceramic & Polish
+            </div>
+          </div>
+
+          <!-- Popular Services Section -->
+          <div class="section-header">
+            <h2 class="section-title">Popular Doorstep Packages</h2>
+            <a href="javascript:void(0)" class="section-link" onclick="window.switchMainTab('servicesTab')">View All (8)</a>
+          </div>
+
+          <div class="service-cards-grid" id="servicesCardsGrid">
+            <!-- Dynamic Service Cards -->
+          </div>
+
+          <!-- INTERACTIVE BEFORE & AFTER SLIDER WIDGET -->
+          <div class="before-after-widget">
+            <div class="section-header" style="margin-bottom: 8px;">
+              <div>
+                <h3 class="section-title" style="font-size: 15px;">Real Transformation</h3>
+                <div style="font-size: 11px; color: var(--text-muted);">Slide handle to inspect scratch-safe decontamination</div>
+              </div>
+              <span class="brand-tag">9H Mirror Finish</span>
+            </div>
+
+            <div class="ba-container">
+              <!-- After (Background) -->
+              <img class="ba-image" src="assets/images/before_after.jpg" alt="After Wash Detailing">
+              <span class="ba-badge after">After TorqGleam</span>
+              
+              <!-- Before (Foreground Cliped) -->
+              <div class="ba-overlay">
+                <img src="assets/images/before_after.jpg" alt="Before Dirty Wash">
+                <span class="ba-badge before">Before Wash</span>
+              </div>
+
+              <!-- Interactive Handle -->
+              <div class="ba-slider-handle">
+                <i class="fa-solid fa-left-right"></i>
+              </div>
+              <input type="range" min="0" max="100" value="50" id="baSlider" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; z-index: 20;">
+            </div>
+          </div>
+
+          <!-- Special Promotions & Referral Carousel -->
+          <div class="section-header">
+            <h3 class="section-title">Special Offers & Rewards</h3>
+            <span style="font-size: 11px; color: var(--primary-light);">Tap code to copy</span>
+          </div>
+
+          <div class="offer-banner-slider">
+            <div class="offer-card">
+              <div>
+                <div class="offer-tag">FIRST BOOKING</div>
+                <div class="offer-headline">Flat ₹150 Off</div>
+                <div class="offer-desc">Valid on all doorstep foam wash & interior packages.</div>
+              </div>
+              <div class="offer-code-pill">
+                <span class="offer-code-text">FIRSTWASH</span>
+                <button class="copy-code-btn" onclick="navigator.clipboard.writeText('FIRSTWASH'); torqCustomer.showToast('Code FIRSTWASH copied!', 'success')">Copy</button>
+              </div>
+            </div>
+
+            <div class="offer-card gold">
+              <div>
+                <div class="offer-tag">CERAMIC SHIELD</div>
+                <div class="offer-headline">₹500 Instant Off</div>
+                <div class="offer-desc">Machine polish & 9H quartz coating at your doorstep.</div>
+              </div>
+              <div class="offer-code-pill">
+                <span class="offer-code-text">CERAMIC500</span>
+                <button class="copy-code-btn" onclick="navigator.clipboard.writeText('CERAMIC500'); torqCustomer.showToast('Code CERAMIC500 copied!', 'success')">Copy</button>
+              </div>
+            </div>
+
+            <div class="offer-card">
+              <div>
+                <div class="offer-tag">REFER & EARN</div>
+                <div class="offer-headline">Get ₹100 Free</div>
+                <div class="offer-desc">Invite a neighbor or colleague. Both get ₹100 wash credits!</div>
+              </div>
+              <div class="offer-code-pill">
+                <span class="offer-code-text">TORQ-ALEX-99</span>
+                <button class="copy-code-btn" onclick="torqCustomer.copyReferralCode()">Share</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust Badges & Eco Guarantee -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px;">
+            <div style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-shield-halved" style="color: var(--primary-light);"></i> The TorqWash Pro Doorstep Standard
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 11px; color: var(--text-muted);">
+              <div><i class="fa-solid fa-droplet-slash" style="color: var(--success);"></i> <strong>Saves 120L Water:</strong> Eco-friendly wash</div>
+              <div><i class="fa-solid fa-plug-circle-check" style="color: var(--primary-light);"></i> <strong>Self-Powered:</strong> Onboard silence generator</div>
+              <div><i class="fa-solid fa-certificate" style="color: var(--warning);"></i> <strong>Certified Techs:</strong> Background verified</div>
+              <div><i class="fa-solid fa-car-on" style="color: var(--purple);"></i> <strong>₹50L Insurance:</strong> Comprehensive coverage</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 2: SERVICES FULL CATALOG -->
+        <div class="view-panel" id="servicesTab">
+          <div class="section-header" style="margin-bottom: 14px;">
+            <div>
+              <h2 class="section-title">All Service Packages</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">Prices calibrated for your active vehicle</div>
+            </div>
+          </div>
+          <!-- Full Grid re-used -->
+          <div id="fullServicesListGrid" class="service-cards-grid">
+            <!-- Will render all services -->
+          </div>
+        </div>
+
+        <!-- TAB 3: MONTHLY SUBSCRIPTIONS (NEW) -->
+        <div class="view-panel" id="subscriptionsTab">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Monthly Wash Subscriptions</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">Hassle-free doorstep car care with huge monthly savings</div>
+            </div>
+          </div>
+
+          <!-- Active Membership Container -->
+          <div id="activeSubBannerContainer"></div>
+
+          <!-- Subscription Plans Grid -->
+          <div id="subscriptionsPlansGrid"></div>
+        </div>
+
+        <!-- TAB 4: SERVICE HISTORY & BOOKINGS -->
+        <div class="view-panel" id="bookingsTab">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Service History & Bookings</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">Track active washes and view past invoices</div>
+            </div>
+          </div>
+          
+          <div class="admin-tabs" style="margin-bottom: 14px;">
+            <button class="admin-tab-btn active" onclick="torqCustomer.filterBookings('All', this)">All</button>
+            <button class="admin-tab-btn" onclick="torqCustomer.filterBookings('Active', this)">Active</button>
+            <button class="admin-tab-btn" onclick="torqCustomer.filterBookings('Completed', this)">Completed</button>
+          </div>
+
+          <div id="bookingsHistoryList">
+            <!-- Rendered by store -->
+          </div>
+        </div>
+
+        <!-- TAB 5: COMPLAINTS & ISSUES RESOLUTION (NEW) -->
+        <div class="view-panel" id="complaintsTab">
+          <div class="section-header" style="margin-bottom: 14px;">
+            <div>
+              <h2 class="section-title">Complaints & Disputes Desk</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">100% Satisfaction guarantee with free re-wash protection</div>
+            </div>
+            <button class="hero-cta-btn" style="padding: 7px 14px; font-size: 12px;" onclick="torqCustomer.openComplaintModal()">
+              <i class="fa-solid fa-plus"></i> File Complaint
+            </button>
+          </div>
+
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 12px; color: #fde68a; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-shield-halved" style="font-size: 20px; color: var(--warning);"></i>
+            <div>Every doorstep wash is insured up to ₹50 Lakhs. If unsatisfied, we re-clean within 24h or issue full refund.</div>
+          </div>
+
+          <div id="complaintsListContainer"></div>
+        </div>
+
+        <!-- TAB 4: OFFERS & REFERRALS -->
+        <div class="view-panel" id="offersTab">
+          <div class="section-header">
+            <h2 class="section-title">Offers & Rewards</h2>
+          </div>
+
+          <!-- Referral Card -->
+          <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(15, 23, 42, 0.95) 100%); border: 1px solid var(--border-active); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--primary-light); margin-bottom: 6px;">Doorstep Referral Program</div>
+            <h3 style="font-size: 18px; color: #fff; margin-bottom: 6px;">Give ₹100, Get ₹100</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Invite your friends, apartment neighbors, or colleagues to TorqWash. When they book their first wash, you both receive ₹100 credits.</p>
+
+            <div style="display: flex; gap: 8px; align-items: center; background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px dashed var(--border-active); margin-bottom: 14px;">
+              <span style="font-family: monospace; font-size: 15px; font-weight: 800; color: #fff; flex: 1;">TORQ-ALEX-99</span>
+              <button class="details-btn" onclick="torqCustomer.copyReferralCode()"><i class="fa-regular fa-copy"></i> Copy Code</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #cbd5e1;">
+              <div><strong>4</strong> Successful Referrals</div>
+              <div><strong style="color: #34d399;">₹200</strong> Wallet Balance</div>
+            </div>
+          </div>
+
+          <h3 class="section-title" style="font-size: 15px; margin-bottom: 12px;">Active Coupon Codes</h3>
+          <div id="step6CouponListPromo">
+            <!-- Will render coupons -->
+          </div>
+        </div>
+
+        <!-- TAB 5: PROFILE & GARAGE -->
+        <div class="view-panel" id="profileTab">
+          <div class="section-header">
+            <h2 class="section-title">My Profile & Account</h2>
+          </div>
+
+          <!-- User Card -->
+          <div class="specialist-card" style="margin-bottom: 14px;">
+            <div class="specialist-left">
+              <div class="spec-avatar">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Alex Sharma">
+              </div>
+              <div>
+                <div class="spec-name">Alex Sharma <span class="spec-badge">VIP Member</span></div>
+                <div style="font-size: 11px; color: var(--text-muted);">+91 98450 12345 • alex.sharma@torqwash.in</div>
+                <div style="font-size: 11px; color: var(--primary-light); margin-top: 2px;">
+                  <i class="fa-solid fa-wallet"></i> Wallet Balance: <strong>₹200</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons for Profile & Settings -->
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button class="hero-cta-btn" style="flex: 1; padding: 8px 12px; font-size: 12px; justify-content: center;" onclick="torqCustomer.openSettingsModal()">
+              <i class="fa-solid fa-gear"></i> Edit Profile & Settings
+            </button>
+            <button class="details-btn" style="padding: 8px 12px; font-size: 12px;" onclick="torqCustomer.openGarageModal()">
+              <i class="fa-solid fa-warehouse"></i> My Cars (5)
+            </button>
+          </div>
+
+          <!-- Settings & Actions List -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <button class="vehicle-select-item" onclick="torqCustomer.openSettingsModal()">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-user-gear" style="color: var(--primary-light);"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Account Settings & Preferences</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Edit Name, Mobile, Email, Alerts, Language</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="torqCustomer.openGarageModal()">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-warehouse"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">My Garage Vehicles</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Manage Tata Safari, Thar, Nexon EV, XUV700, Creta</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="window.switchMainTab('subscriptionsTab')">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-gem" style="color: #38bdf8;"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Monthly Wash Subscriptions</div>
+                  <div style="font-size: 11px; color: #34d399;">Active: Gold Signature Pass (3 washes left)</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="window.switchMainTab('bookingsTab')">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Service History & Past Invoices</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">View completed jobs, download GST tax bills, rebook</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="window.switchMainTab('complaintsTab')">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Complaints & Help Desk</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">File quality complaint, request re-clean, track tickets</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="torqCustomer.openFeedbackModal()">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-star" style="color: #fbbf24;"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Rate & Feedback (Get ₹50 Credit)</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Share your experience and earn wallet rewards</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="torqCustomer.showToast('All WhatsApp, SMS and Push alerts are ENABLED.', 'success')">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-bell"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Notification Preferences</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">WhatsApp updates, SMS & Push alerts enabled</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+
+            <button class="vehicle-select-item" onclick="alert('TorqWash Pro 24/7 Helpline: 1800-419-8800 (Toll Free). WhatsApp Support: +91 98450 12345')">
+              <div class="vehicle-select-left">
+                <div class="car-icon-box"><i class="fa-solid fa-headset"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">24/7 Customer Support Helpline</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Call 1800-419-8800 or chat with operations lead</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-dim);"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 6: LIVE TRACKER VIEW -->
+        <div class="view-panel" id="trackerTab">
+          <div class="section-header" style="margin-bottom: 8px;">
+            <div>
+              <h2 class="section-title">Live Service Tracking</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">Real-time GPS updates & specialist ETA</div>
+            </div>
+            <button class="details-btn" onclick="window.switchMainTab('homeTab')">
+              <i class="fa-solid fa-arrow-left"></i> Home
+            </button>
+          </div>
+
+          <div id="liveTrackerContent">
+            <!-- Dynamic Tracker Content -->
+          </div>
+        </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="mobile-bottom-nav">
+          <div class="nav-item active" data-tab="homeTab" onclick="window.switchMainTab('homeTab')">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+          </div>
+          <div class="nav-item" data-tab="bookingsTab" onclick="window.switchMainTab('bookingsTab')">
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Bookings</span>
+            <span class="nav-badge">1</span>
+          </div>
+          <div class="nav-item" data-tab="servicesTab" onclick="window.switchMainTab('servicesTab')">
+            <i class="fa-solid fa-spray-can-sparkles"></i>
+            <span>Services</span>
+          </div>
+          <div class="nav-item" data-tab="offersTab" onclick="window.switchMainTab('offersTab')">
+            <i class="fa-solid fa-tags"></i>
+            <span>Offers</span>
+          </div>
+          <div class="nav-item" data-tab="profileTab" onclick="window.switchMainTab('profileTab')">
+            <i class="fa-solid fa-user-gear"></i>
+            <span>Profile</span>
+          </div>
+        </nav>
+
+      </div>
+
+      <!-- ==========================================================================
+           2. SERVICE PROVIDER APP PANEL ("TorqPro Specialist")
+           ========================================================================== -->
+      <div id="providerAppContainer" class="app-viewport" style="display: none;">
+        <div class="provider-header">
+          <div class="specialist-left">
+            <div class="spec-avatar">
+              <img src="assets/images/technician_mark.jpg" alt="Mark Jenkins">
+            </div>
+            <div>
+              <div class="spec-name">Mark Jenkins <span class="spec-badge">TORQ PRO</span></div>
+              <div style="font-size: 11px; color: #94a3b8;">Van KA-05-MD-1192 • Indiranagar Hub</div>
+            </div>
+          </div>
+          <div class="provider-online-toggle">
+            <div class="toggle-switch active" id="providerStatusToggle" onclick="torqProvider.toggleOnlineStatus()">
+              <div class="toggle-slider"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 16px;">
+          <div style="font-size: 11px; font-weight: 700; color: #34d399; margin-bottom: 8px;" id="providerStatusLabel">
+            ONLINE • ACCEPTING JOBS
+          </div>
+
+          <!-- Specialist KPI Metrics -->
+          <div class="stats-grid-4">
+            <div class="stat-metric-card">
+              <span class="stat-label">Today's Earnings</span>
+              <span class="stat-val highlight" id="provEarnToday">₹2,850</span>
+            </div>
+            <div class="stat-metric-card">
+              <span class="stat-label">This Week</span>
+              <span class="stat-val" id="provEarnWeek">₹16,420</span>
+            </div>
+            <div class="stat-metric-card">
+              <span class="stat-label">Jobs Today</span>
+              <span class="stat-val" id="provJobsCount">3</span>
+            </div>
+            <div class="stat-metric-card">
+              <span class="stat-label">Rating</span>
+              <span class="stat-val" id="provRatingVal" style="color: var(--warning);">4.96 ★</span>
+            </div>
+          </div>
+
+          <!-- Incoming Job Radar -->
+          <div class="section-header">
+            <h3 class="section-title" style="font-size: 15px;">Nearby Job Radar</h3>
+            <span class="pulse-dot"></span>
+          </div>
+          <div id="providerIncomingRadar">
+            <!-- Dynamic Incoming Requests -->
+          </div>
+
+          <!-- Active Jobs List -->
+          <div class="section-header" style="margin-top: 20px;">
+            <h3 class="section-title" style="font-size: 15px;">Active Assigned Jobs</h3>
+          </div>
+          <div id="providerActiveJobsList">
+            <!-- Rendered by Provider class -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================================================
+           3. ADMIN COMMAND CENTER HQ
+           ========================================================================== -->
+      <div id="adminAppContainer" class="app-viewport" style="display: none;">
+        <div class="admin-layout">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">TorqGleam HQ Command Center</h2>
+              <div style="font-size: 11px; color: var(--text-muted);">Real-time operations, revenue dispatch & audits</div>
+            </div>
+            <button class="hero-cta-btn" style="padding: 6px 14px; font-size: 12px;" onclick="torqAdmin.broadcastPushNotification()">
+              <i class="fa-solid fa-bullhorn"></i> Push Alert
+            </button>
+          </div>
+
+          <!-- Executive KPIs -->
+          <div class="admin-kpi-grid">
+            <div class="admin-kpi-card">
+              <div class="stat-label">Total Gross Revenue</div>
+              <div class="stat-val highlight" id="kpiTotalRevenue">₹1,48,250</div>
+              <div style="font-size: 10px; color: var(--success); margin-top: 4px;">+24% vs last week</div>
+            </div>
+            <div class="admin-kpi-card">
+              <div class="stat-label">Completed Bookings</div>
+              <div class="stat-val" id="kpiCompletedBookings">1,248</div>
+              <div style="font-size: 10px; color: #94a3b8; margin-top: 4px;">99.2% satisfaction</div>
+            </div>
+            <div class="admin-kpi-card">
+              <div class="stat-label">Active Ongoing Jobs</div>
+              <div class="stat-val" id="kpiActiveBookings" style="color: var(--warning);">3</div>
+              <div style="font-size: 10px; color: #94a3b8; margin-top: 4px;">Live tracking dispatched</div>
+            </div>
+            <div class="admin-kpi-card">
+              <div class="stat-label">Active Mobile Vans</div>
+              <div class="stat-val" id="kpiTotalProviders">42</div>
+              <div style="font-size: 10px; color: var(--primary-light); margin-top: 4px;">Indiranagar / Koramangala</div>
+            </div>
+          </div>
+
+          <!-- Admin Navigation Tabs -->
+          <div class="admin-tabs">
+            <button class="admin-tab-btn active" onclick="torqAdmin.switchAdminTab('overview', this)">Overview</button>
+            <button class="admin-tab-btn" onclick="torqAdmin.switchAdminTab('bookings', this)">Live Bookings</button>
+            <button class="admin-tab-btn" onclick="torqAdmin.switchAdminTab('services', this)">Pricing & Packages</button>
+            <button class="admin-tab-btn" onclick="torqAdmin.switchAdminTab('providers', this)">Providers</button>
+            <button class="admin-tab-btn" onclick="torqAdmin.switchAdminTab('coupons', this)">Coupons & Promos</button>
+            <button class="admin-tab-btn" onclick="torqAdmin.switchAdminTab('tickets', this)">Support Tickets</button>
+          </div>
+
+          <!-- Sub-panels -->
+          <div id="adminOverview">
+            <div class="data-table-container" style="padding: 16px; margin-bottom: 20px;">
+              <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 12px;">Recent Real-Time Bookings</h3>
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Vehicle</th>
+                    <th>Service</th>
+                    <th>Slot</th>
+                    <th>Location</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminBookingsTableBody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="adminBookings" style="display: none;">
+            <div class="data-table-container">
+              <!-- Reuses bookings table with filters -->
+            </div>
+          </div>
+
+          <div id="adminServices" style="display: none;">
+            <div class="section-header">
+              <h3 class="section-title" style="font-size: 15px;">Dynamic Pricing Engine</h3>
+            </div>
+            <div id="adminServicesList">
+              <!-- Rendered by admin.js -->
+            </div>
+          </div>
+
+          <div id="adminProviders" style="display: none;">
+            <div class="data-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Specialist</th>
+                    <th>Role</th>
+                    <th>Verification</th>
+                    <th>Rating</th>
+                    <th>Status</th>
+                    <th>Audit</th>
+                  </tr>
+                </thead>
+                <tbody id="adminProvidersTableBody">
+                  <!-- Providers -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="adminCoupons" style="display: none;">
+            <div class="section-header">
+              <h3 class="section-title" style="font-size: 15px;">Promotions & Coupons</h3>
+              <button class="details-btn" onclick="torqAdmin.addNewCoupon()"><i class="fa-solid fa-plus"></i> Add Coupon</button>
+            </div>
+            <div class="data-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th>Discount</th>
+                    <th>Min Order</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCouponsTableBody">
+                  <!-- Coupons -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="adminTickets" style="display: none;">
+            <div class="data-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Customer</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adminTicketsTableBody">
+                  <!-- Tickets -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       MODALS & DIALOGS
+       ========================================================================== -->
+
+  <!-- 1. MULTI-STEP BOOKING WIZARD MODAL (8 STEPS) -->
+  <div class="booking-wizard-modal" id="bookingWizardModal">
+    <div class="wizard-card">
+      <div class="wizard-header">
+        <div class="wizard-title-group">
+          <span class="wizard-step-counter" id="wizardStepCounter">Step 1 of 8</span>
+          <span class="wizard-title">Book Doorstep Detailing</span>
+        </div>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeBookingModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="wizard-progress-bar">
+        <div class="progress-fill" id="wizardProgressFill" style="width: 12.5%;"></div>
+      </div>
+
+      <div class="wizard-body">
+        
+        <!-- STEP 1: Select Vehicle -->
+        <div class="wizard-step active" id="wizardStep1">
+          <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">Select Vehicle</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Pricing adjusts based on vehicle size & surface area</p>
+          <div id="step1VehicleList" class="vehicle-grid-selection"></div>
+          <button class="add-vehicle-dashed-btn" onclick="torqCustomer.openAddVehicleModal()">
+            <i class="fa-solid fa-plus"></i> Add Another Vehicle
+          </button>
+        </div>
+
+        <!-- STEP 2: Service & Add-ons -->
+        <div class="wizard-step" id="wizardStep2">
+          <div id="step2ServiceHeader"></div>
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Recommended Add-on Treatments</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Multi-select add-ons for a complete detailing experience</p>
+          <div id="step2AddonsList" class="addons-checklist"></div>
+        </div>
+
+        <!-- STEP 3: Date & Time Selection -->
+        <div class="wizard-step" id="wizardStep3">
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Select Date</h3>
+          <div class="date-selector-row" id="step3DateRow"></div>
+
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; margin-top: 14px;">Select Time Slot</h3>
+          <div class="time-slot-grid" id="step3TimeSlots"></div>
+        </div>
+
+        <!-- STEP 4: Doorstep Location & Leaflet Pin Drop -->
+        <div class="wizard-step" id="wizardStep4">
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Service Location</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Drop a pin or choose your saved address</p>
+
+          <div class="saved-address-pills" id="step4SavedPills"></div>
+
+          <div class="map-picker-container">
+            <div id="bookingMapPicker"></div>
+            <button class="gps-locate-btn" onclick="torqCustomer.locateGPS()">
+              <i class="fa-solid fa-crosshairs"></i> Use GPS
+            </button>
+          </div>
+
+          <input type="text" class="location-input-field" id="step4AddressInput" placeholder="Address line (Apartment / House / Street)">
+          <input type="text" class="location-input-field" id="step4NotesInput" placeholder="Parking instructions (e.g. Basement 2, Pillar B18, Tap nearby)">
+        </div>
+
+        <!-- STEP 5: Review Booking -->
+        <div class="wizard-step" id="wizardStep5">
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Review Booking Summary</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Verify your appointment details before proceeding</p>
+          <div id="step5ReviewSummary"></div>
+        </div>
+
+        <!-- STEP 6: Apply Coupons -->
+        <div class="wizard-step" id="wizardStep6">
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Apply Coupon / Voucher</h3>
+          <div class="coupon-input-box">
+            <input type="text" class="coupon-input" id="step6InputCode" placeholder="ENTER CODE (e.g. FIRSTWASH)">
+            <button class="coupon-apply-btn" onclick="torqCustomer.applyCouponCode()">Apply</button>
+          </div>
+          <div id="step6CouponList"></div>
+        </div>
+
+        <!-- STEP 7: Payment Options -->
+        <div class="wizard-step" id="wizardStep7">
+          <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Choose Payment Mode</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Total Payable: <strong style="color: var(--primary-light);" id="step7PayAmount">₹0</strong></p>
+
+          <div class="payment-tabs">
+            <div class="payment-option-row selected" data-method="UPI (Google Pay)" onclick="torqCustomer.selectPaymentMethod('UPI (Google Pay)')">
+              <div class="pay-left">
+                <div class="pay-icon"><i class="fa-brands fa-google-pay"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">UPI (Google Pay / PhonePe / QR)</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Instant 1-click verification</div>
+                </div>
+              </div>
+              <div class="radio-check"></div>
+            </div>
+
+            <!-- Dynamic UPI QR -->
+            <div id="upiQrSection" class="upi-qr-display">
+              <div style="font-size: 11px; font-weight: 700; margin-bottom: 6px;">SCAN TO PAY VIA ANY UPI APP</div>
+              <!-- Generated QR code mockup SVG -->
+              <svg width="130" height="130" viewBox="0 0 100 100" fill="#0f172a">
+                <rect width="100" height="100" fill="#ffffff"/>
+                <path d="M10 10h30v30H10z m6 6v18h18V16z m2 2h14v14H18z M60 10h30v30H60z m6 6v18h18V16z m2 2h14v14H68z M10 60h30v30H10z m6 6v18h18V66z m2 2h14v14H18z M45 10h10v10H45z M45 30h10v10H45z M10 45h10v10H10z M30 45h10v10H30z M45 45h10v10H45z M60 45h10v10H60z M80 45h10v10H80z M45 60h10v10H45z M45 80h10v10H45z M60 60h10v10H60z M75 60h15v10H75z M60 75h10v15H60z M75 75h15v15H75z" fill="#0f172a"/>
+              </svg>
+              <div style="font-size: 10px; color: #64748b; margin-top: 4px;">UPI ID: torqwash.pay@icici</div>
+            </div>
+
+            <div class="payment-option-row" data-method="Credit / Debit Card" onclick="torqCustomer.selectPaymentMethod('Credit / Debit Card')">
+              <div class="pay-left">
+                <div class="pay-icon"><i class="fa-regular fa-credit-card"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Credit / Debit Card</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Visa, MasterCard, RuPay</div>
+                </div>
+              </div>
+              <div class="radio-check"></div>
+            </div>
+
+            <div class="payment-option-row" data-method="Cash / Card on Service" onclick="torqCustomer.selectPaymentMethod('Cash / Card on Service')">
+              <div class="pay-left">
+                <div class="pay-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                <div>
+                  <div style="font-weight: 700; color: #fff;">Pay on Completion</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Cash or Card to specialist after wash</div>
+                </div>
+              </div>
+              <div class="radio-check"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 8: Confirmation Screen -->
+        <div class="wizard-step" id="wizardStep8">
+          <div id="step8ConfirmCard"></div>
+        </div>
+
+      </div>
+
+      <!-- Wizard Navigation Footer -->
+      <div class="wizard-footer">
+        <button class="wizard-prev-btn" id="wizardPrevBtn" onclick="torqCustomer.prevWizardStep()">Back</button>
+        <button class="wizard-next-btn" id="wizardNextBtn" onclick="torqCustomer.nextWizardStep()">
+          Continue <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SERVICE DETAILS MODAL -->
+  <div class="general-modal" id="serviceDetailModal">
+    <div class="modal-dialog">
+      <div style="position: relative; height: 180px;">
+        <img id="srvModalImg" src="assets/images/foam_wash.jpg" style="width: 100%; height: 100%; object-fit: cover;" alt="">
+        <button class="close-wizard-btn" style="position: absolute; top: 12px; right: 12px; z-index: 10;" onclick="torqCustomer.closeServiceDetails()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="padding: 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <div>
+            <h3 id="srvModalTitle" style="font-size: 18px; font-weight: 800; color: #fff;"></h3>
+            <div id="srvModalRating" style="font-size: 12px; color: var(--warning); margin-top: 2px;"></div>
+          </div>
+          <div id="srvModalPrice" style="font-size: 22px; font-weight: 800; color: var(--primary-light);"></div>
+        </div>
+
+        <p id="srvModalDesc" style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;"></p>
+
+        <div style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px;">
+          <i class="fa-regular fa-clock" style="color: var(--primary-light);"></i> Estimated Duration: <strong id="srvModalDuration"></strong>
+        </div>
+
+        <h4 style="font-size: 14px; color: #fff; margin-bottom: 10px; margin-top: 14px;">What's Included:</h4>
+        <ul id="srvModalInclusions" style="list-style: none; padding: 0; margin-bottom: 18px;"></ul>
+
+        <button class="hero-cta-btn" style="width: 100%;" onclick="torqCustomer.bookCurrentDetailService()">
+          Book This Package Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. GARAGE & ADD VEHICLE MODAL -->
+  <div class="general-modal" id="garageModal">
+    <div class="modal-dialog" style="padding: 20px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3 class="section-title">My Garage Vehicles</h3>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeGarageModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="garageVehiclesList"></div>
+      <button class="add-vehicle-dashed-btn" style="margin-top: 12px;" onclick="torqCustomer.openAddVehicleModal()">
+        <i class="fa-solid fa-plus"></i> Add New Vehicle
+      </button>
+    </div>
+  </div>
+
+  <div class="general-modal" id="addVehicleModal">
+    <div class="modal-dialog" style="padding: 20px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3 class="section-title">Add Vehicle to Garage</h3>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeAddVehicleModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Car Brand</label>
+        <select class="form-control" id="addVehBrand">
+          <option value="Tata">Tata Motors (Safari, Harrier, Nexon, Punch)</option>
+          <option value="Mahindra">Mahindra (Thar, XUV700, Scorpio-N, Bolero)</option>
+          <option value="Maruti Suzuki">Maruti Suzuki (Swift, Brezza, Grand Vitara, Baleno)</option>
+          <option value="Hyundai">Hyundai (Creta, Venue, Verna, i20)</option>
+          <option value="Kia">Kia (Seltos, Sonet, Carens)</option>
+          <option value="Toyota">Toyota (Fortuner, Innova Hycross, Hyryder)</option>
+          <option value="Honda">Honda (City, Elevate, Amaze)</option>
+          <option value="MG">MG Motor (Hector, ZS EV, Astor)</option>
+          <option value="BMW">BMW</option>
+          <option value="Mercedes-Benz">Mercedes-Benz</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Model Name</label>
+        <input type="text" class="form-control" id="addVehModel" placeholder="e.g. Safari, Thar, XUV700, Creta, Nexon, Swift">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Vehicle Category</label>
+        <select class="form-control" id="addVehCategory">
+          <option value="Hatchback">Hatchback (Small/Compact)</option>
+          <option value="Sedan">Sedan (Medium/Executive)</option>
+          <option value="SUV">SUV (Compact & Mid-Size)</option>
+          <option value="Luxury">Luxury / Sports Car</option>
+          <option value="MPV">MPV / 7-Seater</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Registration Number</label>
+        <input type="text" class="form-control" id="addVehReg" placeholder="e.g. KA-01-AB-1234">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Exterior Color</label>
+        <input type="text" class="form-control" id="addVehColor" placeholder="e.g. Mineral White Metallic">
+      </div>
+
+      <button class="hero-cta-btn" style="width: 100%; margin-top: 10px;" onclick="torqCustomer.saveNewVehicle()">
+        Save to Garage
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. GST TAX INVOICE PRINT MODAL -->
+  <div class="invoice-modal" id="taxInvoiceModal">
+    <div class="invoice-paper">
+      <div style="display: flex; justify-content: flex-end; margin-bottom: 6px;">
+        <button class="close-wizard-btn" onclick="torqCustomer.closeInvoiceModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="invoicePrintContainer"></div>
+    </div>
+  </div>
+
+  <!-- 5. NOTIFICATIONS MODAL -->
+  <div class="general-modal" id="notificationsModal">
+    <div class="modal-dialog" style="padding: 20px;">
+      <div class="section-header" style="margin-bottom: 14px;">
+        <h3 class="section-title">Notifications</h3>
+        <button class="close-wizard-btn" onclick="torqApp.closeNotifications()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="notifModalList"></div>
+    </div>
+  </div>
+
+  <!-- 6. REVIEWS MODAL -->
+  <div class="general-modal" id="reviewModal">
+    <div class="modal-dialog" style="padding: 20px;">
+      <div class="section-header" style="margin-bottom: 14px;">
+        <h3 class="section-title">Rate Your Experience</h3>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeReviewModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">How clean is your car after Mark's detailing?</p>
+      
+      <div class="star-rating-input" id="starRatingInput">
+        <i class="fa-solid fa-star active" onclick="torqCustomer.setRatingStars(1)"></i>
+        <i class="fa-solid fa-star active" onclick="torqCustomer.setRatingStars(2)"></i>
+        <i class="fa-solid fa-star active" onclick="torqCustomer.setRatingStars(3)"></i>
+        <i class="fa-solid fa-star active" onclick="torqCustomer.setRatingStars(4)"></i>
+        <i class="fa-solid fa-star active" onclick="torqCustomer.setRatingStars(5)"></i>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Written Feedback</label>
+        <textarea class="form-control" id="reviewCommentInput" rows="3" placeholder="Tell us about the shine, punctuality and service quality..."></textarea>
+      </div>
+
+      <button class="hero-cta-btn" style="width: 100%;" onclick="torqCustomer.submitRating()">
+        Submit Verified Review
+      </button>
+    </div>
+  </div>
+
+  <!-- 7. CANNED CHAT MODAL WITH SPECIALIST -->
+  <div class="general-modal" id="chatModal">
+    <div class="modal-dialog" style="padding: 20px; display: flex; flex-direction: column; height: 460px;">
+      <div class="section-header" style="margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="assets/images/technician_mark.jpg" style="width: 32px; height: 32px; border-radius: 50%;" alt="">
+          <div>
+            <div style="font-weight: 700; color: #fff;">Chat with Mark Jenkins</div>
+            <div style="font-size: 10px; color: var(--success);"><i class="fa-solid fa-circle" style="font-size: 6px;"></i> Active • En Route</div>
+          </div>
+        </div>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div id="chatMessagesBox" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 10px 0;">
+        <div style="align-self: flex-start; background: var(--bg-card-elevated); color: #fff; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; margin-bottom: 8px;">
+          Hello Alex! I am currently heading over in the TorqWash mobile unit. ETA is around 12 minutes.
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+        <button class="details-btn" style="font-size: 10px;" onclick="torqCustomer.sendQuickChat('Car is parked in Basement 2')">📍 In Basement 2</button>
+        <button class="details-btn" style="font-size: 10px;" onclick="torqCustomer.sendQuickChat('Keys are with security desk')">🔑 Keys with security</button>
+        <button class="details-btn" style="font-size: 10px;" onclick="torqCustomer.sendQuickChat('Water tap is unlocked')">🚰 Water tap unlocked</button>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="chatInputText" class="form-control" placeholder="Type a message..." onkeydown="if(event.key==='Enter'&&this.value){torqCustomer.sendQuickChat(this.value); this.value='';}">
+        <button class="hero-cta-btn" style="padding: 10px 16px;" onclick="const el=document.getElementById('chatInputText'); if(el.value){torqCustomer.sendQuickChat(el.value); el.value='';}"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. COMPLAINT / ISSUE TICKET MODAL (NEW) -->
+  <div class="general-modal" id="complaintModal">
+    <div class="modal-dialog" style="padding: 24px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3 class="section-title">File a Service Complaint</h3>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeComplaintModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+        We take doorstep car wash quality seriously. Your ticket will be assigned directly to an operations lead.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Related Booking</label>
+        <select class="form-control" id="complaintBookingSelect">
+          <option value="TQ-84920">#TQ-84920 - Tata Safari (Today, Oct 5)</option>
+          <option value="TQ-81042">#TQ-81042 - Tata Nexon EV (Sep 28)</option>
+          <option value="TQ-General">General Platform Query</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Issue Category</label>
+        <select class="form-control" id="complaintCategorySelect">
+          <option value="Water Spots / Missed Areas">Water Spots or Missed Grime</option>
+          <option value="Specialist Delay / Punctuality">Specialist Arrival Delay</option>
+          <option value="Interior Odor / Vacuum Quality">Interior Vacuum or Steam Quality</option>
+          <option value="Billing / Payment Query">Billing or Overcharge Dispute</option>
+          <option value="Specialist Behavior">Specialist Professionalism</option>
+          <option value="Other">Other Issues</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Issue Summary / Subject</label>
+        <input type="text" class="form-control" id="complaintSubjectInput" placeholder="e.g. Roof glass water spots or 20 min delay">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Detailed Description</label>
+        <textarea class="form-control" id="complaintDescInput" rows="3" placeholder="Explain what happened and what resolution you require..."></textarea>
+      </div>
+
+      <button class="hero-cta-btn" style="width: 100%; justify-content: center;" onclick="torqCustomer.submitComplaintForm()">
+        <i class="fa-solid fa-paper-plane"></i> Submit Complaint Ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- 9. GENERAL CUSTOMER FEEDBACK MODAL (NEW) -->
+  <div class="general-modal" id="generalFeedbackModal">
+    <div class="modal-dialog" style="padding: 24px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3 class="section-title">Customer Feedback & Suggestions</h3>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeFeedbackModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #34d399;">
+        <i class="fa-solid fa-gift"></i> <strong>Reward:</strong> Receive ₹50 credits in your TorqWash wallet upon submission!
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Feedback Category</label>
+        <select class="form-control" id="feedbackCategorySelect">
+          <option value="Overall App Experience">App Booking Experience</option>
+          <option value="Doorstep Cleaning Quality">Doorstep Detailing Quality</option>
+          <option value="Monthly Subscriptions">Monthly Subscriptions & Pricing</option>
+          <option value="Specialist Behavior">Specialist Courtesy & Care</option>
+          <option value="Feature Suggestion">Suggest a New Feature or Service</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your Feedback / Suggestions</label>
+        <textarea class="form-control" id="feedbackCommentInput" rows="3" placeholder="Tell us how we can make doorstep car care even better..."></textarea>
+      </div>
+
+      <button class="hero-cta-btn" style="width: 100%; justify-content: center;" onclick="torqCustomer.submitFeedbackForm()">
+        <i class="fa-solid fa-star"></i> Submit & Claim ₹50 Wallet Credit
+      </button>
+    </div>
+  </div>
+
+  <!-- 10. AUTH OTP MODAL -->
+  <div class="general-modal" id="authModal">
+    <div class="modal-dialog" style="padding: 24px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3 class="section-title">Sign In / Register</h3>
+        <button class="close-wizard-btn" onclick="torqApp.closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div id="authPhoneStep">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Enter your mobile number to get instant OTP code.</p>
+        <div class="form-group">
+          <label class="form-label">Mobile Number</label>
+          <div style="display: flex; gap: 8px;">
+            <span style="background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 10px 12px; border-radius: var(--radius-sm); color: #fff;">+91</span>
+            <input type="tel" class="form-control" id="authPhoneInput" value="9845012345" placeholder="10-digit number">
+          </div>
+        </div>
+        <button class="hero-cta-btn" style="width: 100%; margin-top: 6px;" onclick="torqApp.requestOtp()">
+          Get OTP <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div style="display: flex; align-items: center; margin: 18px 0; color: var(--text-dim); font-size: 11px;">
+          <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+          <span style="padding: 0 10px;">OR SIGN IN WITH</span>
+          <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="vehicle-select-item" style="flex: 1; justify-content: center; gap: 8px;" onclick="torqApp.closeAuthModal(); torqCustomer.showToast('Signed in via Google', 'success');">
+            <i class="fa-brands fa-google"></i> Google
+          </button>
+          <button class="vehicle-select-item" style="flex: 1; justify-content: center; gap: 8px;" onclick="torqApp.closeAuthModal(); torqCustomer.showToast('Signed in via Apple', 'success');">
+            <i class="fa-brands fa-apple"></i> Apple
+          </button>
+        </div>
+      </div>
+
+      <div id="authOtpStep" style="display: none;">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Enter the 4-digit code sent to your phone (Demo Code: <strong>8844</strong>)</p>
+        <div class="form-group">
+          <input type="text" class="form-control" id="authOtpInput" placeholder="4-digit OTP" style="font-size: 20px; letter-spacing: 0.3em; text-align: center; font-weight: 800;">
+        </div>
+        <button class="hero-cta-btn" style="width: 100%; margin-top: 6px;" onclick="torqApp.verifyOtp()">
+          Verify & Continue
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 11. PROFILE & APP SETTINGS MODAL (NEW) -->
+  <div class="general-modal" id="settingsModal">
+    <div class="modal-dialog" style="padding: 24px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h3 class="section-title"><i class="fa-solid fa-gear" style="color: var(--primary-light);"></i> Profile & Settings</h3>
+        <button class="close-wizard-btn" onclick="torqCustomer.closeSettingsModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="settingNameInput" value="Alex Sharma">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="settingPhoneInput" value="+91 98450 12345">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="settingEmailInput" value="alex.sharma@torqwash.in">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Primary Doorstep Address</label>
+        <input type="text" class="form-control" id="settingCityInput" value="Indiranagar 100ft Rd, Bangalore">
+      </div>
+
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; margin: 16px 0;">
+        <div style="font-weight: 700; color: #fff; font-size: 13px; margin-bottom: 10px;">
+          <i class="fa-solid fa-bell" style="color: var(--primary-light);"></i> Notification Preferences
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 12px; color: var(--text-muted);"><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> WhatsApp Order Alerts</span>
+          <div class="toggle-switch active" onclick="this.classList.toggle('active'); torqCustomer.toggleNotificationPref('WhatsApp');">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 12px; color: var(--text-muted);"><i class="fa-solid fa-message" style="color: #38bdf8;"></i> SMS Verification & ETA</span>
+          <div class="toggle-switch active" onclick="this.classList.toggle('active'); torqCustomer.toggleNotificationPref('SMS');">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; color: var(--text-muted);"><i class="fa-solid fa-tag" style="color: #fbbf24;"></i> Promo Discounts & Offers</span>
+          <div class="toggle-switch active" onclick="this.classList.toggle('active'); torqCustomer.toggleNotificationPref('Promos');">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">App Language / மொழி</label>
+        <select class="form-control" onchange="torqCustomer.changeAppLanguage(this.value)">
+          <option value="en">English (Default)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+        </select>
+      </div>
+
+      <!-- Supabase Cloud Database Integration Panel -->
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: var(--radius-sm); padding: 14px; margin-top: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <div style="font-weight: 700; color: #fff; font-size: 13px;">
+            <i class="fa-solid fa-database" style="color: #34d399;"></i> Supabase Cloud Database
+          </div>
+          <span id="supabaseStatusBadge" class="status-pill on-way" style="font-size: 10px;">Awaiting URL</span>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+          Connect your live Supabase project. Enter your Project URL below:
+        </div>
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label class="form-label" style="font-size: 11px;">Supabase Project URL</label>
+          <input type="url" class="form-control" id="supabaseUrlInput" placeholder="https://your-project-id.supabase.co" style="font-size: 12px; font-family: monospace;">
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label class="form-label" style="font-size: 11px;">Publishable Key</label>
+          <input type="text" class="form-control" id="supabaseKeyInput" value="sb_publishable_H4eh55TI5e1w4n5Mv81Ikw_8JfEpM5T" style="font-size: 11px; font-family: monospace;">
+        </div>
+        <button type="button" class="hero-cta-btn" style="width: 100%; justify-content: center; padding: 7px; font-size: 12px;" onclick="window.saveSupabaseUiConfig()">
+          <i class="fa-solid fa-plug-circle-check"></i> Connect & Verify Supabase
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 18px;">
+        <button class="details-btn" style="flex: 1;" onclick="torqCustomer.closeSettingsModal()">Cancel</button>
+        <button class="hero-cta-btn" style="flex: 2; justify-content: center;" onclick="torqCustomer.saveSettingsForm()">
+          <i class="fa-solid fa-floppy-disk"></i> Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Alerts Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Leaflet Maps JS CDN -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Supabase JavaScript SDK v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Environment Configuration & Supabase Client -->
+  <script src="env.js"></script>
+  <script src="js/supabaseClient.js"></script>
+
+  <!-- Application Logic Modules -->
+  <script src="js/store.js"></script>
+  <script src="js/customer.js"></script>
+  <script src="js/provider.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
